@@ -391,8 +391,8 @@ export function apply(ctx: Context, config: Config) {
         await session.send(`${h.quote(session.messageId)}正在生成金价走势图，请稍候...`);
 
         // 使用默认值或用户输入
-        const actualNum = Number ( num ?? config.defaultNum);
-        const actualUnit = unit ?? config.defaultUnit;
+        const actualNum: number = num !== undefined ? Number(num) : config.defaultNum;
+        const actualUnit: string = unit ?? config.defaultUnit;
 
         // 解析时间单位
         const unitMap: { [key: string]: number } = {
