@@ -16,3 +16,8 @@ tsconfig.tsbuildinfo
 *.ntvs*
 *.njsproj
 *.sln
+
+# Python
+venv
+*.pyc
+__pycache__
