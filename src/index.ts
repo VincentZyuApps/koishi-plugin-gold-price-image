@@ -386,9 +386,13 @@ export function apply(ctx: Context, config: Config) {
   // 注册命令2: 金价走势 - 查看历史走势图
   ctx.command(config.imageCommandName + ' [num:number] [unit:string]', '查看金价历史走势图')
     .alias('goldtrend')
-    .action(async ({ session }, num = config.defaultNum, unit = config.defaultUnit) => {
+    .action(async ({ session }, num, unit) => {
       try {
         await session.send(`${h.quote(session.messageId)}正在生成金价走势图，请稍候...`);
+
+        // 使用默认值或用户输入
+        const actualNum = Number ( num ?? config.defaultNum);
+        const actualUnit = unit ?? config.defaultUnit;
 
         // 解析时间单位
         const unitMap: { [key: string]: number } = {
@@ -409,15 +413,15 @@ export function apply(ctx: Context, config: Config) {
           '日': 24,
         };
 
-        const unitLower = unit.toLowerCase();
+        const unitLower = actualUnit.toLowerCase();
         const multiplier = unitMap[unitLower];
         
         if (!multiplier) {
-          await session.send(`❌ 不支持的时间单位: ${unit}\n支持的单位: m/h/d/minute/hour/day/分/分钟/时/小时/天`);
+          await session.send(`❌ 不支持的时间单位: ${actualUnit}\n支持的单位: m/h/d/minute/hour/day/分/分钟/时/小时/天`);
           return;
         }
 
-        const hoursBack = num * multiplier;
+        const hoursBack = actualNum * multiplier;
         
         if (hoursBack <= 0 || hoursBack > 24 * 365) {
           await session.send('❌ 时间范围必须在 1分钟 到 365天 之间');
@@ -439,9 +443,9 @@ export function apply(ctx: Context, config: Config) {
         }
 
         // 生成标题显示
-        const displayUnit = unitLower === 'm' || unit === '分' || unit === '分钟' ? '分钟' :
-                           unitLower === 'h' || unit === '时' || unit === '小时' ? '小时' : '天';
-        const titleRange = `${num}${displayUnit}`;
+        const displayUnit = unitLower === 'm' || actualUnit === '分' || actualUnit === '分钟' ? '分钟' :
+                           unitLower === 'h' || actualUnit === '时' || actualUnit === '小时' ? '小时' : '天';
+        const titleRange = `${actualNum}${displayUnit}`;
         
         // 渲染图表
         const chartBase64 = await renderGoldPriceChart(ctx, {
