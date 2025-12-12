@@ -85,8 +85,11 @@ export interface Config {
   chartWidth: number
   chartHeight: number
   maxDataPoints: number
+  maxXAxisTicks: number
+  maxYAxisTicks: number
   imageType: 'png' | 'jpeg' | 'webp'
   imageQuality: number
+  chartJsPath: string
 
   verboseSessionOutput: boolean
   verboseConsoleOutput: boolean
@@ -165,16 +168,30 @@ export const Config = Schema.intersect([
   Schema.object({
     chartWidth: Schema
       .number()
-      .default(1200)
+      .default(1600)
       .description('图表宽度（像素）'),
     chartHeight: Schema
       .number()
-      .default(600)
+      .default(900)
       .description('图表高度（像素）'),
     maxDataPoints: Schema
       .number()
-      .default(288)
-      .description('最大数据点数量（默认288=24小时*12次/小时）'),
+      .min(10)
+      .max(114514)
+      .default(144)
+      .description('最大采样点数量（从数据库查询的数据进行采样后的点数）'),
+    maxXAxisTicks: Schema
+      .number()
+      .min(5)
+      .max(200)
+      .default(24)
+      .description('横轴（X轴）最大时间标签数量'),
+    maxYAxisTicks: Schema
+      .number()
+      .min(3)
+      .max(20)
+      .default(9)
+      .description('纵轴（Y轴）最大金价标签数量'),
     imageType: Schema
       .union(['png', 'jpeg', 'webp'])
       .default('png')
@@ -185,6 +202,11 @@ export const Config = Schema.intersect([
       .max(100)
       .default(90)
       .description('图片质量（仅对 jpeg 和 webp 有效）'),
+    chartJsPath: Schema
+      .string()
+      .default(resolve(__dirname, '../assets/chart.umd.min.js'))
+      .role('textarea', { rows: [2, 5] })
+      .description('Chart.js 文件的绝对路径（默认使用插件内置的 Chart.js）'),
   }).description('图表配置 📊'),
 
   Schema.object({
@@ -387,8 +409,9 @@ export function apply(ctx: Context, config: Config) {
   ctx.command(config.imageCommandName + ' [num:number] [unit:string]', '查看金价历史走势图')
     .alias('goldtrend')
     .action(async ({ session }, num, unit) => {
+      let tipMsgIdArr: string[] | undefined;
       try {
-        await session.send(`${h.quote(session.messageId)}正在生成金价走势图，请稍候...`);
+        tipMsgIdArr = await session.send(`${h.quote(session.messageId)}⏳ 正在生成金价走势图，请稍候...`);
 
         // 使用默认值或用户输入
         const actualNum: number = num !== undefined ? Number(num) : config.defaultNum;
@@ -434,7 +457,6 @@ export function apply(ctx: Context, config: Config) {
           .select('gold_price_data')
           .where({ timestamp: { $gte: startTime } })
           .orderBy('timestamp', 'asc')
-          .limit(config.maxDataPoints)
           .execute();
 
         if (priceData.length === 0) {
@@ -455,6 +477,11 @@ export function apply(ctx: Context, config: Config) {
           imageType: config.imageType,
           quality: config.imageQuality,
           title: `招行金价走势（最近${titleRange}）`,
+          chartJsPath: config.chartJsPath,
+          maxDataPoints: config.maxDataPoints,
+          maxXAxisTicks: config.maxXAxisTicks,
+          maxYAxisTicks: config.maxYAxisTicks,
+          verboseConsoleOutput: config.verboseConsoleOutput,
         });
 
         await session.send(h.image(`data:image/${config.imageType};base64,${chartBase64}`));
@@ -468,6 +495,18 @@ export function apply(ctx: Context, config: Config) {
           await session.send(`${errorMsg}\n🔍 调试信息: ${error.message}`);
         } else {
           await session.send(errorMsg);
+        }
+      } finally {
+        // 安全地撤回提示消息
+        if (tipMsgIdArr && tipMsgIdArr.length > 0) {
+          try {
+            await session.bot.deleteMessage(session.channelId, tipMsgIdArr[0]);
+          } catch (deleteError) {
+            // 删除失败不影响主流程，仅记录日志
+            if (config.verboseConsoleOutput) {
+              logger.warn(`⚠️ 撤回提示消息失败: ${deleteError.message}`);
+            }
+          }
         }
       }
     });
