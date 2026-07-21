@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { copyFile, mkdir, readFile, rename, rm, unlink } from 'node:fs/promises';
-import { CHART_ASSET_PARTS } from '../config';
+import { CHART_ASSET_PATH_RELATIVE_TO_BASE_DIR } from '../config';
 import { resolveRenderFont } from '../font';
 import type { GoldPriceChartOptions } from '../types';
 import { prepareChartData } from '../utils/chart';
@@ -26,7 +26,7 @@ function getBundledChartJsPath(): string {
 }
 
 export function getRuntimeChartJsPath(baseDir: string): string {
-  return path.join(baseDir, ...CHART_ASSET_PARTS);
+  return path.join(baseDir, ...CHART_ASSET_PATH_RELATIVE_TO_BASE_DIR);
 }
 
 function sha256(buffer: Buffer): string {

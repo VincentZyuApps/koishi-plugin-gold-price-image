@@ -1,4 +1,5 @@
 export type FontMode = 'system' | 'lxgw' | 'custom';
+export type FetchScheduleMode = 'simple' | 'cron';
 
 export interface GoldPriceData {
   id: number;

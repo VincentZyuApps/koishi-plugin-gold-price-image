@@ -3,10 +3,10 @@ import { createHash, randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import { mkdir, readFile, rename, stat, unlink, writeFile } from 'fs/promises';
 import type { Context } from 'koishi';
-import { FONT_ASSET_PARTS } from './config';
+import { FONT_ASSET_PATH_RELATIVE_TO_BASE_DIR } from './config';
 import type { FontMode } from './types';
 
-export const LXGW_WENKAI_FILE_NAME = FONT_ASSET_PARTS[FONT_ASSET_PARTS.length - 1];
+export const LXGW_WENKAI_FILE_NAME = FONT_ASSET_PATH_RELATIVE_TO_BASE_DIR[FONT_ASSET_PATH_RELATIVE_TO_BASE_DIR.length - 1];
 
 const GITEE_RELEASE_BASE = 'https://gitee.com/vincent-zyu/koishi-plugin-awa-quote-image/releases/download/fonts';
 const GITHUB_RELEASE_BASE = 'https://github.com/VincentZyuApps/koishi-plugin-awa-quote-image/releases/download/fonts';
@@ -31,11 +31,11 @@ export interface ResolvedRenderFont {
 }
 
 export function getFontDirByBaseDir(baseDir: string): string {
-  return path.join(baseDir, ...FONT_ASSET_PARTS.slice(0, -1));
+  return path.join(baseDir, ...FONT_ASSET_PATH_RELATIVE_TO_BASE_DIR.slice(0, -1));
 }
 
 export function getLxgwWenKaiPathByBaseDir(baseDir: string): string {
-  return path.join(baseDir, ...FONT_ASSET_PARTS);
+  return path.join(baseDir, ...FONT_ASSET_PATH_RELATIVE_TO_BASE_DIR);
 }
 
 function verifyFontBuffer(buffer: Buffer): boolean {

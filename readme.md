@@ -1,6 +1,19 @@
 # 💰 koishi-plugin-gold-price-image
 
-[![npm](https://img.shields.io/npm/v/koishi-plugin-gold-price-image?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-gold-price-image)
+[![npm](https://img.shields.io/npm/v/koishi-plugin-gold-price-image?style=flat-square&logo=npm)](https://www.npmjs.com/package/koishi-plugin-gold-price-image)
+[![npm-download](https://img.shields.io/npm/dm/koishi-plugin-gold-price-image?style=flat-square&logo=npm)](https://www.npmjs.com/package/koishi-plugin-gold-price-image)
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VincentZyuApps/koishi-plugin-gold-price-image)
+[![Gitee](https://img.shields.io/badge/Gitee-C71D23?style=for-the-badge&logo=gitee&logoColor=white)](https://gitee.com/vincent-zyu/koishi-plugin-gold-price-image)
+
+[![Koishi Forum](https://img.shields.io/badge/Koishi%20Forum-xxxxx-5546A3?style=for-the-badge&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAABU0lEQVR42p2UQSsFYRSGnxnqLuytKWKpKFkQNsS%2FsOHPWPADLCmxU5S7UzYWNrJR7lYiRF2FeWzOMKZ7mXHqNNP5vvP2nu%2B850CY2lP4X1K31ZbaDm%2BpO%2Bpyp5wfAXVEPfRvO1JHf4AVQGbUh7j4EZ4VkrNCXPVRnf3CUBN1SH2KC28VGOV3ntRhNclZHdcAKYM11QR1oVBOXctzFlNgBTC8qmXxPQEegbVeYApIgJT6tg%2F0AdMp0B%2FBpCabK2AAmAAa%2F2GRBft1oBFPkqTAba7LCiAfQC9wClwAY1HJHepuiO29Yrsf1Dn1uiDU3RTYCtTkl1Leg8k9MB4NGgReI28rV3azgyCz0og01Xl1Uz1QX8uCTELm3UbkTF1VJ9Wr0tn3iBSGdjYG0XivE3VN3VD31PM4a3cc2tIGGI0VkTO7rLxGuiy25ejmjfqsvkSXui62TxaK03td4FXTAAAAAElFTkSuQmCC&logoColor=white)](https://forum.koishi.xyz/t/topic/xxxxx)
+[![QQ群](https://img.shields.io/badge/QQ群-1085190201-12B7F5?style=flat-square&logo=qq&logoColor=white)](https://qm.qq.com/q/ZN7fxZ3qCq)
+
+<h2>💬 交流反馈</h2>
+<p>🐛 Bug 反馈 / 💡 建议 / 👨‍💻 插件开发交流，欢迎加群：</p>
+<p><del>💬 插件使用问题 / 🐛 Bug反馈 / 👨‍💻 插件开发交流，欢迎加入QQ群：<b>259248174</b> 🎉（这个群G了）</del></p>
+<p>💬 插件使用问题 / 🐛 Bug反馈 / 👨‍💻 插件开发交流，欢迎加入QQ群：<b>1085190201</b> 🎉</p>
+<p>💡 在群里直接艾特我，回复的更快哦~ ✨</p>
 
 📈 招行金价走势图 Koishi 插件
 
@@ -12,8 +25,9 @@
 - 📦 `puppeteer` - 用于渲染图表
 - 🌐 `http` - 用于网络请求
 - 💾 `database` - 用于存储历史数据
+- ⏰ `cron` - 可选，仅在采集模式选择 `cron` 时需要
 
-如果没有安装这些插件，本插件将无法工作！
+如果没有安装前三项必需服务，本插件将无法工作。默认 `simple` 采集模式不需要 cron 服务。
 
 ---
 
@@ -44,12 +58,26 @@
 金价走势 30 d     # 查看最近30天
 ```
 
+### 效果预览
+
+#### 实时金价
+
+![实时金价查询效果](docs/images/preview/preview.current-price.png)
+
+#### 金价走势
+
+![金价走势图效果](docs/images/preview/preview.trend-image.png)
+
 ## ⚙️ 配置说明
 
 ### 基础配置
 
 - **命令名称** - 默认为 `金价`，可自定义
-- **抓取间隔** - 默认每5分钟抓取一次，可调整为1-1440分钟
+- **采集模式** - `simple`（默认）按分钟间隔采集；`cron` 按五段式 Cron 表达式采集
+- **抓取间隔** - 简单模式默认每5分钟抓取一次，可调整为1-1440分钟
+- **Cron 表达式** - Cron 模式默认为 `*/5 * * * *`，即每5分钟执行一次
+
+选择 `cron` 模式时需要安装并启用 [`koishi-plugin-cron`](https://www.npmjs.com/package/koishi-plugin-cron)。cron 服务缺失或表达式无效时会记录明确错误，不会回退到简单模式。两种模式都会在上一轮采集未完成时跳过新任务，避免并发请求和重复写入。
 
 ### API配置
 
@@ -70,8 +98,8 @@
 | --- | --- | --- |
 | `fontMode` | `lxgw` | 字体模式，可选 `system`、`lxgw`、`custom` |
 | `customFontPath` | 空字符串 | 自定义字体绝对路径，仅在 `custom` 模式使用 |
-| `fontAssetParts` | `data / fonts / LXGWWenKaiMono-Regular.ttf` | 禁用的只读数组，展示相对于 `ctx.baseDir` 的共享字体路径 |
-| `chartJsAssetParts` | `data / assets / gold-price-image / chart.umd.min.js` | 禁用的只读数组，展示相对于 `ctx.baseDir` 的 Chart.js 运行路径 |
+| `fontAssetPathRelativeToBaseDir` | `data / fonts / LXGWWenKaiMono-Regular.ttf` | 禁用的只读数组，展示相对于 `ctx.baseDir` 的共享字体路径 |
+| `chartJsAssetPathRelativeToBaseDir` | `data / assets / gold-price-image / chart.umd.min.js` | 禁用的只读数组，展示相对于 `ctx.baseDir` 的 Chart.js 运行路径 |
 
 字体模式严格执行，不会自动回退到其他模式：
 
@@ -107,6 +135,7 @@
 - **Chart.js** - 图表渲染库
 - **Puppeteer** - 浏览器自动化
 - **Koishi 定时器** - 定时任务调度
+- **koishi-plugin-cron** - 可选的 Cron 计划任务服务
 
 ## 📝 注意事项
 

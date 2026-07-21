@@ -2,13 +2,14 @@ import type { Context } from 'koishi';
 import type { Config as GoldPriceConfig } from './config';
 import { registerCurrentPriceCommand } from './commands/current';
 import { registerPriceTrendCommand } from './commands/trend';
-import { setupGoldPriceCollector } from './api';
+import { setupGoldPriceCollector } from './scheduler';
 import { setupGoldPriceDatabase } from './database';
 import { ensureManagedLxgwFont } from './font';
 import { ensureChartJsAsset } from './render';
 
 export const inject = {
   required: ['database', 'puppeteer', 'http'],
+  optional: ['cron'],
 };
 
 export const name = 'gold-price-image';
