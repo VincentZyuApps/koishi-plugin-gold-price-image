@@ -1,10 +1,9 @@
-# py 3.12.5
-import requests
 import json
-from pydantic import BaseModel
-from typing import Dict
 import time
 
+import requests
+from typing import Dict
+from pydantic import BaseModel
 
 class Config(BaseModel):
     COOLDOWN_TIME: int = 1  # 冷却时间（秒）
