@@ -47,8 +47,11 @@ test('⏱️🌐 time unit helpers preserve supported aliases and title labels',
   assert.equal(getTimeUnitMultiplier('天'), 24);
   assert.equal(getTimeUnitMultiplier('week'), undefined);
   assert.equal(getTimeUnitDisplayName('m'), '分钟');
+  assert.equal(getTimeUnitDisplayName('MINUTES'), '分钟');
   assert.equal(getTimeUnitDisplayName('小时'), '小时');
+  assert.equal(getTimeUnitDisplayName('hours'), '小时');
   assert.equal(getTimeUnitDisplayName('day'), '天');
+  assert.equal(getTimeUnitDisplayName('days'), '天');
 });
 
 test('⏰📐 simple scheduling aligns long intervals without truncating hours', () => {
