@@ -77,11 +77,11 @@ gold-image 30 天         # 查看最近 30 天
 
 #### 实时金价
 
-![实时金价查询效果](docs/images/preview/preview.current-price.png)
+![实时金价查询效果](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-gold-price-image@main/docs/images/preview/preview.current-price.png)
 
 #### 金价走势
 
-![金价走势图效果](docs/images/preview/preview.trend-image.png)
+![金价走势图效果](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-gold-price-image@main/docs/images/preview/preview.trend-image.png)
 
 ---
 
