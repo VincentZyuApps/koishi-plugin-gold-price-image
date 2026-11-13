@@ -75,6 +75,10 @@ gold-image 30 天         # 查看最近 30 天
 
 ### 效果预览
 
+#### 指令帮助
+
+![指令帮助效果](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-gold-price-image@main/docs/images/preview/preview.command-help.png)
+
 #### 实时金价
 
 ![实时金价查询效果](https://cdn.jsdelivr.net/gh/VincentZyuApps/koishi-plugin-gold-price-image@main/docs/images/preview/preview.current-price.png)
