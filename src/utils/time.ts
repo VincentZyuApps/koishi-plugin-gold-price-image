@@ -1,10 +1,14 @@
 const UNIT_MULTIPLIERS: Record<string, number> = {
   m: 1 / 60,
+  min: 1 / 60,
+  mins: 1 / 60,
   minute: 1 / 60,
   minutes: 1 / 60,
   分: 1 / 60,
   分钟: 1 / 60,
   h: 1,
+  hr: 1,
+  hrs: 1,
   hour: 1,
   hours: 1,
   时: 1,
@@ -22,7 +26,7 @@ export function getTimeUnitMultiplier(unit: string): number | undefined {
 
 export function getTimeUnitDisplayName(unit: string): string {
   const unitLower = unit.toLowerCase();
-  if (['m', 'minute', 'minutes'].includes(unitLower) || unit === '分' || unit === '分钟') return '分钟';
-  if (['h', 'hour', 'hours'].includes(unitLower) || unit === '时' || unit === '小时') return '小时';
+  if (['m', 'min', 'mins', 'minute', 'minutes'].includes(unitLower) || unit === '分' || unit === '分钟') return '分钟';
+  if (['h', 'hr', 'hrs', 'hour', 'hours'].includes(unitLower) || unit === '时' || unit === '小时') return '小时';
   return '天';
 }

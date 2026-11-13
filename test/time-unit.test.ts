@@ -42,12 +42,18 @@ test('💰🚫 parseGoldPriceResponse rejects malformed or non-numeric prices', 
 });
 
 test('⏱️🌐 time unit helpers preserve supported aliases and title labels', () => {
+  assert.equal(getTimeUnitMultiplier('min'), 1 / 60);
+  assert.equal(getTimeUnitMultiplier('mins'), 1 / 60);
   assert.equal(getTimeUnitMultiplier('minutes'), 1 / 60);
+  assert.equal(getTimeUnitMultiplier('hr'), 1);
+  assert.equal(getTimeUnitMultiplier('hrs'), 1);
   assert.equal(getTimeUnitMultiplier('HOUR'), 1);
   assert.equal(getTimeUnitMultiplier('天'), 24);
   assert.equal(getTimeUnitMultiplier('week'), undefined);
   assert.equal(getTimeUnitDisplayName('m'), '分钟');
+  assert.equal(getTimeUnitDisplayName('min'), '分钟');
   assert.equal(getTimeUnitDisplayName('MINUTES'), '分钟');
+  assert.equal(getTimeUnitDisplayName('hr'), '小时');
   assert.equal(getTimeUnitDisplayName('小时'), '小时');
   assert.equal(getTimeUnitDisplayName('hours'), '小时');
   assert.equal(getTimeUnitDisplayName('day'), '天');

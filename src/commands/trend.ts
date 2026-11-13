@@ -16,22 +16,42 @@ export function registerPriceTrendCommand(ctx: Context, config: Config, logger: 
   const command = ctx.command(`${config.imageCommandName} [num:number] [unit:string]`, '查看金价历史走势图');
   for (const alias of config.imageCommandAliases) command.alias(alias);
 
+  command
+    .usage([
+      '参数说明：',
+      `  [num]   时间跨度数值（正数，默认: ${config.defaultNum}，范围: 1分钟 ~ 365天）`,
+      `  [unit]  时间单位（默认: ${config.defaultUnit}）`,
+      '          • 分钟级: m, min, minute, 分, 分钟',
+      '          • 小时级: h, hr, hour, 时, 小时',
+      '          • 天数级: d, day, 天, 日',
+    ].join('\n'))
+    .example(`${config.imageCommandName}             查看最近 24 小时走势图（默认配置）`)
+    .example(`${config.imageCommandName} 30 m          查看最近 30 分钟走势图`)
+    .example(`${config.imageCommandName} 12 h          查看最近 12 小时走势图`)
+    .example(`${config.imageCommandName} 7 d           查看最近 7 天走势图`)
+    .example(`${config.imageCommandName} 3 天          支持中文单位（3天/6小时/30分钟等）`);
+
   command.action(async ({ session }, num, unit) => {
     let tipMsgIdArr: string[] | undefined;
     try {
       tipMsgIdArr = await session.send(`${h.quote(session.messageId)}⏳ 正在生成金价走势图，请稍候...`);
 
       const actualNum = num !== undefined ? Number(num) : config.defaultNum;
+      if (Number.isNaN(actualNum)) {
+        await session.send(`❌ 时间数值必须是有效的正数: ${num}\n💡 可发送「help ${config.imageCommandName}」查看使用示例`);
+        return;
+      }
+
       const actualUnit = unit ?? config.defaultUnit;
       const multiplier = getTimeUnitMultiplier(actualUnit);
       if (!multiplier) {
-        await session.send(`❌ 不支持的时间单位: ${actualUnit}\n支持的单位: m/h/d/minute/hour/day/分/分钟/时/小时/天`);
+        await session.send(`❌ 不支持的时间单位: ${actualUnit}\n支持的单位: m/min/minute/分/分钟/h/hr/hour/时/小时/d/day/天/日\n💡 可发送「help ${config.imageCommandName}」查看详细说明`);
         return;
       }
 
       const hoursBack = actualNum * multiplier;
       if (hoursBack <= 0 || hoursBack > 24 * 365) {
-        await session.send('❌ 时间范围必须在 1分钟 到 365天 之间');
+        await session.send(`❌ 时间范围必须在 1分钟 到 365天 之间\n💡 可发送「help ${config.imageCommandName}」查看支持的数值范围`);
         return;
       }
 
