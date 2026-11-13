@@ -7,9 +7,9 @@ const pkg = JSON.parse(
   readFileSync(resolve(__dirname, '../package.json'), 'utf-8'),
 );
 
-const COLLAPSIBLE_STYLE = 'margin: 12px 0; overflow: hidden; border: 2px solid #f57c00; border-radius: 13px; background: linear-gradient(135deg, #fff9e6 0%, #ffe8cc 100%); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);';
-const SUMMARY_STYLE = 'cursor: pointer; padding: 12px 16px; color: #d32f2f; font-weight: 700;';
-const COLLAPSIBLE_BODY_STYLE = 'padding: 4px 16px 14px; border-top: 2px solid #f57c00; background: rgba(255, 255, 255, 0.98); color: #2d3748;';
+const COLLAPSIBLE_STYLE = 'margin: 12px 0; overflow: hidden; border: 1.5px solid var(--k-color-warning, #e49400); border-radius: 12px; background: var(--k-color-warning-fade, rgba(228, 148, 0, 0.08)); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); transition: all 0.2s ease;';
+const SUMMARY_STYLE = 'cursor: pointer; padding: 12px 16px; color: var(--k-color-danger, #d32f2f); font-weight: 700; user-select: none;';
+const COLLAPSIBLE_BODY_STYLE = 'padding: 8px 16px 14px; border-top: 1px dashed var(--k-color-warning, #e49400); background: var(--k-card-bg, #ffffff); color: var(--fg1, #2d3748);';
 
 export const usage = `
 <h1>💰 Koishi 插件：招行金价走势图 💰</h1>
@@ -38,7 +38,15 @@ export const usage = `
   </a>
 </p>
 
-<h2 style="color: #ff4444; font-weight: 900; font-size: 24px; margin: 20px 0;">⚠️ 重要提示：需要开启 <b>puppeteer</b>、<b>http</b> 和 <b>database</b> 插件，本插件才能正常使用！</h2>
+<div style="margin: 16px 0; padding: 12px 16px; border-left: 4px solid var(--k-color-danger, #f56c6c); background: var(--k-color-danger-fade, rgba(245, 108, 108, 0.08)); border-radius: 6px;">
+  <div style="color: var(--k-color-danger, #f56c6c); font-size: 16px; font-weight: 700; margin-bottom: 4px;">
+    ⚠️ 重要提示：需要开启前置服务
+  </div>
+  <div style="color: var(--fg1, #333333); font-size: 14px; line-height: 1.6;">
+    需要启用 <b>puppeteer</b>、<b>http</b> 和 <b>database</b> 服务/插件，本插件才能正常抓取与渲染！
+  </div>
+</div>
+
 <p><b>⏰ cron 是可选服务：</b>默认 <code>simple</code> 采集模式不需要 cron；选择 <code>cron</code> 模式时必须安装并启用 <code>koishi-plugin-cron</code>，缺失时不会回退简单模式。</p>
 
 <h3>🚀 快速使用</h3>
