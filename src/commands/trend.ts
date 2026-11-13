@@ -19,13 +19,13 @@ export function registerPriceTrendCommand(ctx: Context, config: Config, logger: 
   command
     .usage([
       '参数说明：',
-      `  [num]   时间跨度数值（正数，默认: ${config.defaultNum}，范围: 1分钟 ~ 365天）`,
-      `  [unit]  时间单位（默认: ${config.defaultUnit}）`,
-      '          • 分钟级: m, min, minute, 分, 分钟',
-      '          • 小时级: h, hr, hour, 时, 小时',
-      '          • 天数级: d, day, 天, 日',
+      `  [num]\t时间跨度数值（正数，默认: ${config.defaultNum}，范围: 1分钟 ~ 365天）`,
+      `  [unit]\t时间单位（默认: ${config.defaultUnit}）`,
+      '    • 分钟级: m, min, minute, 分, 分钟',
+      '    • 小时级: h, hr, hour, 时, 小时',
+      '    • 天数级: d, day, 天, 日',
     ].join('\n'))
-    .example(`${config.imageCommandName}             查看最近 24 小时走势图（默认配置）`)
+    .example(`${config.imageCommandName}               查看最近 24 小时走势图（默认配置）`)
     .example(`${config.imageCommandName} 30 m          查看最近 30 分钟走势图`)
     .example(`${config.imageCommandName} 12 h          查看最近 12 小时走势图`)
     .example(`${config.imageCommandName} 7 d           查看最近 7 天走势图`)
